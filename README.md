@@ -90,11 +90,11 @@ volumes:
 
 Poi apri `http://<indirizzo-del-server>:8080`. Per giocare insieme: nell'app *Nuova campagna → Internet (server Docker)* con l'indirizzo del server; gli altri entrano con il codice di 6 caratteri.
 
-Per aggiornare: `docker compose pull && docker compose up -d` (i dati in `/data` restano). Immagine per `amd64` e `arm64`.
+Per aggiornare: `docker compose pull && docker compose up -d` (i dati in `/data` restano). Immagine per `amd64` e `arm64`. Su un NAS con cartelle condivise imposta `PUID`/`PGID` dell'utente che deve possedere i dati (predefinito 1000).
 
 ### TrueNAS SCALE
 
-*Apps → Discover Apps → ⋮ → Install via YAML*. Prima crea un dataset (es. `tank/apps/pokerole`) con proprietario e gruppo `apps` (568) e permesso di scrittura.
+*Apps → Discover Apps → ⋮ → Install via YAML*. Crea prima un dataset (es. `tank/apps/pokerole`): i permessi li sistema il container, che dà la cartella all'utente `apps` (568) e poi gira come quell'utente. Non aggiungere `user:` al file, altrimenti non può farlo.
 
 ```yaml
 services:
@@ -102,8 +102,9 @@ services:
     image: ghcr.io/zaruka96/pokerole-app:latest
     pull_policy: always
     restart: unless-stopped
-    user: "568:568" # utente "apps" di TrueNAS
     environment:
+      PUID: "568" # utente "apps" di TrueNAS
+      PGID: "568"
       PORT: "8080" # porta interna non privilegiata
     ports:
       - "8080:8080" # porta del NAS : porta interna
