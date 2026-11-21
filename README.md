@@ -88,7 +88,11 @@ volumes:
   pokerole-data:
 ```
 
-Poi apri `http://<indirizzo-del-server>:8080`. Per giocare insieme: nell'app *Nuova campagna → Internet (server Docker)* con l'indirizzo del server; gli altri entrano con il codice di 6 caratteri.
+**Primo avvio:** apri `http://<indirizzo-del-server>:8080/admin` e crea l'account amministratore (in alternativa imposta `ADMIN_USERNAME` e `ADMIN_PASSWORD` nel compose).
+
+**Account e ruoli:** chiunque può iscriversi dall'app (*Server → Iscriviti*), ma entra solo dopo l'approvazione dell'admin. Dal pannello `/admin` l'admin approva le iscrizioni, assegna i ruoli (**Admin**, **Master** che può creare campagne, **Player**), gestisce campagne, connessioni, impostazioni, registro degli accessi e backup.
+
+**Per giocare insieme:** nell'app accedi al server, poi *Nuova campagna → Internet (server Docker)*; gli altri entrano con il codice di 6 caratteri e ritrovano le loro campagne in *Server → Le tue campagne*, da qualsiasi dispositivo.
 
 Per aggiornare: `docker compose pull && docker compose up -d` (i dati in `/data` restano). Immagine per `amd64` e `arm64`. Su un NAS con cartelle condivise imposta `PUID`/`PGID` dell'utente che deve possedere i dati (predefinito 1000).
 
@@ -124,6 +128,7 @@ Per aggiornare: *Update* dall'elenco delle app.
 - **WebSocket attivi** sul percorso `/ws` (in Nginx Proxy Manager: *Websockets Support*), altrimenti le lobby non si collegano.
 - **Upload fino a 25 MB** per immagini e video in chat (nginx: `client_max_body_size 25m;`).
 - Nell'app usa l'indirizzo `https://tuo-dominio` come server Docker.
+- Il server è pensato per stare su internet (account, password cifrate, limite ai tentativi, media visibili solo ai partecipanti), ma usalo sempre **dietro HTTPS**: in chiaro le password viaggerebbero leggibili.
 
 ## ⚖️ Note
 
