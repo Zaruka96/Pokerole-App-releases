@@ -16,7 +16,7 @@
   <a href="https://github.com/Zaruka96/Pokerole-App-releases/releases/latest"><b>⬇️ Scarica l'ultima versione</b></a> ·
   <a href="#-installazione">📦 Installazione</a> ·
   <a href="#-aggiornamenti">🔄 Aggiornamenti</a> ·
-  <a href="#-docker">🐳 Docker / NAS</a>
+  <a href="#-docker--nas">🐳 Docker / NAS</a>
 </p>
 
 ---
@@ -50,7 +50,7 @@
 | **macOS** (Apple Silicon e Intel) | `…_macos-universal.dmg` | App non firmata: la prima volta clic destro sull'app → *Apri* |
 | **Android** | `…_android.apk` | Consenti l'installazione da origini sconosciute |
 | **iOS** | `…_ios-unsigned.ipa` | Con [SideStore](https://sidestore.io) o Sideloadly (vedi sotto) |
-| **Server / NAS** | `ghcr.io/zaruka96/pokerole-app` | Vedi [Docker](#-docker) |
+| **Server / NAS** | `ghcr.io/zaruka96/pokerole-app` | Vedi [Docker](#-docker--nas) |
 
 ### iOS con SideStore
 Aggiungi una volta questa fonte in SideStore (*Sources → +*):
@@ -70,7 +70,9 @@ L'app controlla da sola le nuove versioni all'avvio e ogni 6 ore (anche dal puls
 
 Schede, squadra e inventario restano sul dispositivo: esporta la scheda dall'app per fare un backup.
 
-## 🐳 Docker
+## 🐳 Docker / NAS
+
+Il container serve l'app web **e il server delle lobby** per giocare via internet. Campagne, chat e immagini/video caricati restano nel volume `/data`, quindi sopravvivono agli aggiornamenti.
 
 ```yaml
 services:
@@ -79,10 +81,48 @@ services:
     pull_policy: always
     ports:
       - "8080:80"
+    volumes:
+      - pokerole-data:/data # campagne e media delle lobby
     restart: unless-stopped
+volumes:
+  pokerole-data:
 ```
 
-Poi apri `http://<indirizzo-del-server>:8080`. Per aggiornare: `docker compose pull && docker compose up -d`. Immagine per `amd64` e `arm64`.
+Poi apri `http://<indirizzo-del-server>:8080`. Per giocare insieme: nell'app *Nuova campagna → Internet (server Docker)* con l'indirizzo del server; gli altri entrano con il codice di 6 caratteri.
+
+Per aggiornare: `docker compose pull && docker compose up -d` (i dati in `/data` restano). Immagine per `amd64` e `arm64`.
+
+### TrueNAS SCALE
+
+*Apps → Discover Apps → ⋮ → Install via YAML*. Prima crea un dataset (es. `tank/apps/pokerole`) con proprietario e gruppo `apps` (568) e permesso di scrittura.
+
+```yaml
+services:
+  pokerole:
+    image: ghcr.io/zaruka96/pokerole-app:latest
+    pull_policy: always
+    restart: unless-stopped
+    user: "568:568" # utente "apps" di TrueNAS
+    environment:
+      PORT: "8080" # porta interna non privilegiata
+    ports:
+      - "8080:8080" # porta del NAS : porta interna
+    volumes:
+      - /mnt/tank/apps/pokerole:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+```
+
+Per aggiornare: *Update* dall'elenco delle app.
+
+### Dietro un reverse proxy (dominio HTTPS)
+
+- **WebSocket attivi** sul percorso `/ws` (in Nginx Proxy Manager: *Websockets Support*), altrimenti le lobby non si collegano.
+- **Upload fino a 25 MB** per immagini e video in chat (nginx: `client_max_body_size 25m;`).
+- Nell'app usa l'indirizzo `https://tuo-dominio` come server Docker.
 
 ## ⚖️ Note
 
