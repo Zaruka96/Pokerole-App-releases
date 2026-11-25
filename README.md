@@ -29,18 +29,32 @@
 
 ## ✨ Funzionalità
 
-**Master**
+**Accesso**
+- 🔐 All'apertura scegli l'**host**: *Locale* (lobby sulla stessa Wi-Fi, basta il nome) o un **server** (nome utente e password; i server usati restano in elenco). Oppure usa l'app **offline** come companion
+- 🛡️ Tab **Admin server** per aprire il pannello di amministrazione di un server (o crearne il primo amministratore)
+
+**Guida** (per tutti)
 - 📖 **Pokédex completo** (Kanto → Galar, forme e Mega): filtri per tipo, regione, rank, abilità e mosse; attributi a pallini come nella scheda, mosse per rank, linea evolutiva, debolezze
-- ⚔️ **Mosse, abilità e oggetti** con ricerca e filtri
-- 📚 **Regole** in 15 capitoli, spiegate in modo semplice
-- 🎲 **Generatore di incontri** con Pokémon selvatici già pronti, **tracker di combattimento** (iniziativa, HP, dolore, stati, meteo)
-- 👥 **Schede dei giocatori** importate da file o testo
+- ⚔️ **Mosse, abilità e oggetti** con ricerca e filtri, 📚 **regole** in 15 capitoli spiegate in modo semplice, 🔥 **tabella dei tipi**
+
+**Lobby** (si gioca insieme)
+- 🏠 **Le mie lobby** con codice e ruolo; ospiti una lobby o entri con il codice, con un **link o un QR d'invito**
+- 🎭 Entrando scegli **Master o Player**; il player crea un personaggio per la campagna o collega uno già fatto. In lobby il player non vede gli strumenti del Master e viceversa
+- 💬 **Chat** con whisper, immagini, video, ritratti e messaggi non letti; richieste di tiro e ricompense del Master; scena a schermo intero
+- 🧑‍🤝‍🧑 Tab **Giocatori** per il Master: HP di tutti a colpo d'occhio, modifica di statistiche, squadra e inventario dei player, con **annulla**
+- 🗺️ **NPC** secondari (nome, immagine, squadra) e principali (scheda completa, solo per il Master), nascosti finché il Master non li rivela
+- ⚔️ **Combattimento** secondo le regole con dadi veri o simulati e avviso quando **tocca a te**; scambi tra player; diario di sessione
 
 **Player**
-- 🪪 **Scheda allenatore** (Trainer Card) con punti per rank e achievement
-- 🔴 **Squadra e box**, scheda di ogni Pokémon
+- 👤 **I miei personaggi**: più schede, con un account server le ritrovi da ogni dispositivo
+- 🪪 **Scheda allenatore** (Trainer Card) con punti per rank e achievement; 🔴 **squadra e box**, scheda di ogni Pokémon
 - 🎯 **Dadi automatici sulle mosse**: accuratezza, danno, STAB, dolore, difesa, efficacia di tipo, critico e Chance Dice
-- 🎒 **Inventario**, 🏋️ **training** verso il rank successivo, 🧬 vittorie per l'evoluzione, 🔥 **tabella dei tipi**
+- 🎒 **Inventario**, 🏋️ **training** verso il rank successivo, 🧬 vittorie per l'evoluzione
+
+**Master** (anche senza lobby)
+- 🎲 **Generatore di incontri** con Pokémon selvatici già pronti, **tracker di combattimento** (iniziativa, HP, dolore, stati, meteo)
+
+Su smartphone le sezioni stanno in una barra in basso; tema **chiaro, scuro o automatico** dal menu del profilo.
 
 ## 📦 Installazione
 
@@ -61,14 +75,14 @@ https://github.com/Zaruka96/Pokerole-App-releases/releases/latest/download/sourc
 
 ## 🔄 Aggiornamenti
 
-L'app controlla da sola le nuove versioni all'avvio e ogni 6 ore (anche dal pulsante *Controlla aggiornamenti* nella home):
+L'app controlla da sola le nuove versioni all'avvio e ogni 6 ore (anche dal pulsante *Controlla aggiornamenti* in *Le mie lobby* o *I miei personaggi*):
 
 - **Windows / macOS**: scarica, installa e si riavvia (pacchetti firmati, verificati prima dell'installazione)
 - **Android**: scarica l'APK e lo installa, Android chiede solo la conferma
 - **iOS**: apre SideStore sulla nuova versione
 - **Docker**: mostra l'avviso con il comando per aggiornare il container
 
-Schede, squadra e inventario restano sul dispositivo: esporta la scheda dall'app per fare un backup.
+Senza account le schede restano sul dispositivo (esportale dall'app per un backup); con un account su un server i tuoi personaggi sono salvati anche lì.
 
 ## 🐳 Docker / NAS
 
@@ -88,11 +102,11 @@ volumes:
   pokerole-data:
 ```
 
-**Primo avvio:** apri `http://<indirizzo-del-server>:8080/admin` e crea l'account amministratore (in alternativa imposta `ADMIN_USERNAME` e `ADMIN_PASSWORD` nel compose).
+**Primo avvio:** apri `http://<indirizzo-del-server>:8080/admin` (oppure, dall'app, *Admin server* nella schermata di accesso) e crea l'account amministratore. In alternativa imposta `ADMIN_USERNAME` e `ADMIN_PASSWORD` nel compose.
 
-**Account e ruoli:** chiunque può iscriversi dall'app (*Server → Iscriviti*), ma entra solo dopo l'approvazione dell'admin. Dal pannello `/admin` l'admin approva le iscrizioni, assegna i ruoli (**Admin**, **Master** che può creare campagne, **Player**), gestisce campagne, connessioni, impostazioni, registro degli accessi e backup.
+**Account e ruoli:** chiunque può iscriversi dalla schermata di accesso dell'app (*Non hai un account? Iscriviti*), ma entra solo dopo l'approvazione dell'admin. Dal pannello `/admin` l'admin approva le iscrizioni, assegna i ruoli (**Admin**, **Master** che può creare campagne, **Player**), gestisce campagne, connessioni, impostazioni, registro degli accessi e backup.
 
-**Per giocare insieme:** nell'app accedi al server, poi *Nuova campagna → Internet (server Docker)*; gli altri entrano con il codice di 6 caratteri e ritrovano le loro campagne in *Server → Le tue campagne*, da qualsiasi dispositivo.
+**Per giocare insieme:** nell'app scegli il server come host e accedi, poi *Ospita una lobby*; gli altri entrano con il codice di 6 caratteri o con il link/QR d'invito (*Lobby → Invita*) e ritrovano le loro lobby in *Le mie lobby*, da qualsiasi dispositivo.
 
 Per aggiornare: `docker compose pull && docker compose up -d` (i dati in `/data` restano). Immagine per `amd64` e `arm64`. Su un NAS con cartelle condivise imposta `PUID`/`PGID` dell'utente che deve possedere i dati (predefinito 1000).
 
